@@ -59,7 +59,12 @@ def check_address():
 
     if address:
         try:
-            loc = geolocator.geocode(address)
+            # Normalize input for better accuracy
+            if "usa" not in address.lower():
+                address = f"{address}, USA"
+            
+            # Bias results to US addresses
+            loc = geolocator.geocode(address, country_codes="us", addressdetails=True, exactly_one=True)
             if loc:
                 prop_coords = (loc.latitude, loc.longitude)
                 distance_miles = geodesic(BASE_COORDS, prop_coords).miles
